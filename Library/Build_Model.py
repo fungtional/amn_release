@@ -154,14 +154,13 @@ def Loss_SV(V, S, gradient=False):
         dLoss =  0 * V
     return Loss_norm, dLoss
 
-def Loss_Vin(V, Pin, Vin, bound, parameter, gradient=False):
+def Loss_Vin(V, Pin, Vin, bound, gradient=False):
     # Gradient for input boundary constraint
     # Loss = ReLU(Pin . V - Vin)
     # dLoss = ∂(ReLU(Pin . V - Vin)^2/∂V
     # Input: Cf. Gradient_Descent
     Pin  = tf.convert_to_tensor(np.float32(Pin))
     Loss = tf.linalg.matmul(V, tf.transpose(Pin), b_is_sparse=True) - Vin 
-    # tf.cast(tf.multiply(Vin, parameter.scaler), tf.float32)
     Loss = tf.keras.activations.relu(Loss) if bound == 'UB' else Loss 
     Loss_norm = tf.norm(Loss, axis=1, keepdims=True)/Pin.shape[0] # rescaled
     if gradient:
@@ -191,7 +190,7 @@ def Loss_constraint(V, Vin, parameter, gradient=False):
     # mean squared sum L2+L3+L4
     L2, dL2 = Loss_SV(V, parameter.S, gradient=gradient)
     L3, dL3 = Loss_Vin(V, parameter.Pin, Vin,
-                       parameter.mediumbound, parameter, gradient=gradient)
+                       parameter.mediumbound, gradient=gradient)
     L4, dL4 = Loss_Vpos(V, parameter, gradient=gradient)
     # square sum of L2, L3, L4
     L2 = tf.math.square(L2)
@@ -211,7 +210,7 @@ def Loss_all(V, Vin, Vout, parameter, gradient=False):
     L1, dL1 = Loss_Vout(V, parameter.Pout, Vout, gradient=gradient)
     L2, dL2 = Loss_SV(V, parameter.S, gradient=gradient)
     L3, dL3 = Loss_Vin(V, parameter.Pin, Vin,
-                       parameter.mediumbound, parameter, gradient=gradient)
+                       parameter.mediumbound, gradient=gradient)
     L4, dL4 = Loss_Vpos(V, parameter, gradient=gradient)
     # square sum of L1, L2, L3, L4
     L1 = tf.math.square(L1)
