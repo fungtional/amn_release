@@ -42,10 +42,10 @@ from keras.models import model_from_json
 from keras.layers import Input, Dense, LSTM, Dropout, Flatten, Activation
 from keras.layers import Lambda, Reshape, multiply
 from keras.layers import concatenate, add, subtract, dot
-from keras.wrappers.scikit_learn import KerasRegressor
 from keras.utils import get_custom_objects, CustomObjectScope
 from keras.callbacks import EarlyStopping
 
+from scikeras.wrappers import KerasRegressor
 from sklearn import linear_model
 from sklearn.model_selection import cross_val_score, KFold
 from sklearn.pipeline import Pipeline
